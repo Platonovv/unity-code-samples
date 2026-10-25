@@ -1,4 +1,5 @@
 using UnderworldSurvivors.Bootstrap.States;
+using UnderworldSurvivors.Core;
 using UnderworldSurvivors.Services.Ads;
 using UnderworldSurvivors.Services.Analytics;
 using UnderworldSurvivors.Services.Assets;
@@ -21,8 +22,6 @@ using UnderworldSurvivors.Services.Save;
 using UnderworldSurvivors.Services.Settings;
 using UnderworldSurvivors.Services.Shop;
 using UnderworldSurvivors.Services.Tutorial;
-using UnderworldSurvivors.UI.Ads;
-using UnderworldSurvivors.UI.Cheats;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -34,29 +33,18 @@ namespace UnderworldSurvivors.Bootstrap
         [Header("Settings")]
         [SerializeField] private GameSettings _settings;
 
-        [Header("UI")]
-        [SerializeField] private CheatPanelView _cheatPanel;
-        [SerializeField] private AdNoticeView _adNotice;
-
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterServices(builder);
             RegisterStates(builder);
             builder.RegisterEntryPoint<GameFlow>();
-            builder.RegisterComponent(_cheatPanel);
-            builder.RegisterBuildCallback(InitUi);
-        }
-
-        private void InitUi(IObjectResolver resolver)
-        {
-            _cheatPanel.Init(resolver.Resolve<LocationProgressService>(), resolver.Resolve<IRunLauncher>(), resolver.Resolve<LocalizationService>(), resolver.Resolve<HeroService>(), resolver.Resolve<ISaveService>(), resolver.Resolve<DeviceGraphicsService>());
-            _adNotice.Init(resolver.Resolve<AdsService>(), resolver.Resolve<LocalizationService>());
         }
 
         private void RegisterServices(IContainerBuilder builder)
         {
             builder.RegisterInstance(_settings);
             builder.Register<AssetProvider>(Lifetime.Singleton);
+            builder.Register<UnityRandom>(Lifetime.Singleton).As<IRandom>();
             RegisterPlatform(builder);
             builder.Register<SaveService>(Lifetime.Singleton).As<ISaveService>();
             builder.Register<InputService>(Lifetime.Singleton);

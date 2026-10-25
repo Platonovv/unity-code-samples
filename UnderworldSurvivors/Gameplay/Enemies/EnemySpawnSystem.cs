@@ -1,5 +1,6 @@
 using Leopotam.EcsProto;
 using Leopotam.EcsProto.QoL;
+using UnderworldSurvivors.Core;
 using UnderworldSurvivors.Gameplay.Common;
 using UnderworldSurvivors.Gameplay.Players;
 using UnderworldSurvivors.Services.Assets;
@@ -23,6 +24,7 @@ namespace UnderworldSurvivors.Gameplay.Enemies
         [DI] private EnemyTypes _types;
         [DI] private WaveDirector _director;
         [DI] private CurseScale _curse;
+        [DI] private IRandom _random;
 
         private EliteSettings _elite;
         private int _maxSpawnsPerFrame;
@@ -115,12 +117,12 @@ namespace UnderworldSurvivors.Gameplay.Enemies
             enemy.TypeIndex = typeIndex;
             enemy.MaxHealth = _curse.Health(isElite ? _elite.HealthOf(type) : type.Health);
             enemy.Health = enemy.MaxHealth;
-            enemy.AnimationSeed = Random.value;
+            enemy.AnimationSeed = _random.Value;
             enemy.IsSummoned = isSummoned;
             enemy.IsElite = isElite;
             ref EnemyAttack attack = ref _enemy.Attacks.Add(entity);
             attack.Damage = _curse.Damage(isElite ? type.Damage * _elite.DamageMultiplier : type.Damage);
-            attack.Cooldown = Random.Range(0f, type.AttackInterval);
+            attack.Cooldown = _random.Range(0f, type.AttackInterval);
             attack.MillstoneCooldown = type.MillstoneCooldown * FirstSpecialShare;
             attack.SummonCooldown = type.SummonCooldown * FirstSpecialShare;
             attack.HealCooldown = type.HealCooldown * FirstSpecialShare;

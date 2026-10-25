@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnderworldSurvivors.Core;
 using UnderworldSurvivors.Services.Settings;
 using UnityEngine;
 
@@ -8,12 +9,14 @@ namespace UnderworldSurvivors.Gameplay.Enemies
     {
         private readonly WaveSettings _settings;
         private readonly EnemyTypes _types;
+        private readonly IRandom _random;
         private int _waveIndex = -1;
 
-        public WaveDirector(WaveSettings settings, EnemyTypes types)
+        public WaveDirector(WaveSettings settings, EnemyTypes types, IRandom random)
         {
             _settings = settings;
             _types = types;
+            _random = random;
         }
 
         public float Elapsed { get; private set; }
@@ -47,13 +50,13 @@ namespace UnderworldSurvivors.Gameplay.Enemies
         public int PickEnemyType()
         {
             List<EnemyTypeSettings> enemies = CurrentWave.Enemies;
-            return _types.IndexOf(enemies[Random.Range(0, enemies.Count)]);
+            return _types.IndexOf(enemies[_random.Range(0, enemies.Count)]);
         }
 
         public bool TryPickElite(out int typeIndex)
         {
             List<EnemyTypeSettings> elites = _settings.Elites;
-            typeIndex = elites.Count > 0 ? _types.IndexOf(elites[Random.Range(0, elites.Count)]) : -1;
+            typeIndex = elites.Count > 0 ? _types.IndexOf(elites[_random.Range(0, elites.Count)]) : -1;
             return typeIndex >= 0;
         }
 
